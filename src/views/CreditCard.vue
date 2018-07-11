@@ -159,7 +159,7 @@ export default {
     submit () {
       if (!this.cardNumbers) {
         this.msgNumberFlag = true
-        this.msgContent = '请填写此number'
+        this.msgContent = '请填写此字段'
         return
       } else {
         this.msgNumberFlag = false
@@ -173,14 +173,14 @@ export default {
       }
       if (!this.cardName) {
         this.msgNameFlag = true
-        this.msgContent = '请填写此name'
+        this.msgContent = '请填写此字段'
         return
       } else {
         this.msgNameFlag = false
       }
       if (!this.cardValidThru) {
         this.msgValidThruFlag = true
-        this.msgContent = '请填写此validateThru'
+        this.msgContent = '请填写此字段'
         return
       } else {
         this.msgValidThruFlag = false
@@ -194,7 +194,7 @@ export default {
       }
       if (!this.cardValidate) {
         this.msgValidateFlag = true
-        this.msgContent = '请填写此validate'
+        this.msgContent = '请填写此字段'
         return
       } else {
         this.msgValidateFlag = false
