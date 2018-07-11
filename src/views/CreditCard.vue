@@ -6,16 +6,16 @@
             <div class="card-icon">
               <img :src="imgUrl" :style="{width: iconWidth, height: iconHeight }">
             </div>
-            <div class='card-dot'>
+            <div class='card-dot' :class="{active: focusCardNumbersFlag}">
               {{cardNumbersComputed | addSpace}}
             </div>
-            <span class="card-name">
+            <span class="card-name" :class="{active: focusCardNameFlag}">
               {{cardNameComputed}}
             </span>
-            <span class="valid-thru">
+            <span class="valid-thru" :class="{active: focusCardValidateFlag}">
               valid thru
             </span>
-            <span class="valid-thru-value">
+            <span class="valid-thru-value" :class="{active: focusCardValidateFlag}">
               {{cardValidThruComputed | addSprit}}
             </span>
           </div>
@@ -31,9 +31,10 @@
       </form>
       <div class='container-number'>
       <input placeholder='Card Number' class='form-card-number'
-      @input="handleInputCardNumbers"
+       @input="handleInputCardNumbers"
        maxlength='16'
-       @focus='colorFlag = !colorFlag'
+       @focus="focusCardNumbersFlag = !focusCardNumbersFlag"
+       @blur="focusCardNumbersFlag = !focusCardNumbersFlag"
        v-model='cardNumbers'
        @click="showFlag = true"
        >
@@ -44,6 +45,8 @@
         <input type='text' placeholder='Name' class='form-card-name'
         @click="showFlag = true"
         v-model="cardName"
+        @focus="focusCardNameFlag = !focusCardNameFlag"
+        @blur="focusCardNameFlag = !focusCardNameFlag"
         >
       </div>
       <v-alertMsg :msgContent="msgContent" v-show="msgNameFlag"></v-alertMsg>
@@ -52,7 +55,9 @@
                  @click="showFlag = true"
                  maxlength='4'
                  v-model="cardValidThru"
-                 @input="handleInputCardValidThru">
+                 @input="handleInputCardValidThru"
+                 @focus="focusCardValidateFlag = !focusCardValidateFlag"
+                 @blur="focusCardValidateFlag = !focusCardValidateFlag">
           <input type='text' placeholder='CVC' class='form-card-validate'
                  @keyup.9="showFlag = false"
                  @click="showFlag = false"
@@ -91,6 +96,9 @@ export default {
       msgNameFlag: false,
       msgValidateFlag: false,
       msgValidThruFlag: false,
+      focusCardNumbersFlag: false,
+      focusCardNameFlag: false,
+      focusCardValidateFlag: false,
       cardNumbers: '',
       cardValidate: '',
       cardName: '',
@@ -217,8 +225,6 @@ export default {
     handleInputCardValidThru (e) {
       this.cardValidThru = e.target.value.replace(/[^\d]/g, '')
     }
-  },
-  watch: {
   }
 }
 </script>
@@ -265,6 +271,11 @@ export default {
         top 85px
         font-size 20px
         font-family: Consolas, Courier, monospace
+        opacity 0.5
+        &.active
+          transition opacity .3s
+          opacity 1
+          font-weight 700
       .card-name
         position: absolute
         width: 174px
@@ -277,8 +288,13 @@ export default {
         white-space nowrap
         text-overflow: ellipsis
         text-transform: uppercase
-        font-family: Consolas, Courier, monospace;
-        font-size: 17px;
+        font-family: Consolas, Courier, monospace
+        font-size: 17px
+        opacity 0.5
+        &.active
+          transition opacity .3s
+          opacity 1
+          font-weight 700
       .valid-thru
         position: absolute
         height:12px
@@ -287,6 +303,11 @@ export default {
         right: 30px
         font-size 10px
         color: #fff
+        opacity 0.5
+        &.active
+          transition opacity .3s
+          opacity 1
+          font-weight 700
       .valid-thru-value
         position: absolute
         height:12px
@@ -295,6 +316,11 @@ export default {
         left: 208px
         font-size 16px
         color: #fff
+        opacity 0.5
+        &.active
+          transition opacity .3s
+          opacity 1
+          font-weight 700
     .card-content-converse
       position: absolute
       left 0
