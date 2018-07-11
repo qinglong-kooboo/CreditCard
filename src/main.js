@@ -3,10 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import Vuelidate from 'vuelidate'
 import 'src/common/stylus/index.styl'
-import 'element-ui/lib/theme-chalk/index.css'
-Vue.use(Vuelidate)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

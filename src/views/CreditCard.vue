@@ -1,6 +1,6 @@
 <template>
   <div class='creditCard'>
-      <div class="rotate-wrapper">
+      <form class="rotate-wrapper">
         <transition name="rotate1">
           <div class='card-content' v-show="showFlag">
             <div class="card-icon">
@@ -28,8 +28,8 @@
             </div>
           </div>
         </transition>
-      </div>
-    <div class='container-number'>
+      </form>
+      <div class='container-number'>
       <input placeholder='Card Number' class='form-card-number'
       @input="handleInputCardNumbers"
        maxlength='16'
@@ -38,50 +38,64 @@
        @click="showFlag = true"
        >
     </div>
-    <small>E.g.: 49..., 51..., 36..., 37...</small>
-    <div class='container-name'>
-      <input type='text' placeholder='Name' class='form-card-name'
-      @click="showFlag = true"
-      v-model="cardName"
-      >
-    </div>
-    <div class='container-valid-cvc'>
-      <input type='text' placeholder='Valid Thru' class='form-card-date'
-       @click="showFlag = true"
-        maxlength='4'
-        v-model="cardValidThru"
-        @input="handleInputCardValidThru">
-      <input type='text' placeholder='CVC' class='form-card-validate'
-       @keyup.9="showFlag = false" @click="showFlag = false"
-       v-model="cardValidate"
-       maxlength='4'
-       @input="handleInputCardValidate">
-    </div>
-    <Button class='button-pay' @click="submit">PAY</Button>
-    <div class="cardReport" v-show="reportConfirmFlag">
-      <span>number: {{cardNumbers}}</span><br/>
-      <span>name: {{cardName}}</span><br/>
-      <span>expiry: {{cardValidate}}</span><br/>
-      <span>cvc: {{cardValidThru}}</span><br/>
-      <span>issuer:</span>
-    </div>
+      <v-alertMsg :msgContent="msgContent" v-show="msgNumberFlag"></v-alertMsg>
+      <small>E.g.: 49..., 51..., 36..., 37...</small>
+      <div class='container-name'>
+        <input type='text' placeholder='Name' class='form-card-name'
+        @click="showFlag = true"
+        v-model="cardName"
+        >
+      </div>
+      <v-alertMsg :msgContent="msgContent" v-show="msgNameFlag"></v-alertMsg>
+      <div class='container-valid-cvc'>
+          <input type='text' placeholder='Valid Thru' class='form-card-date'
+                 @click="showFlag = true"
+                 maxlength='4'
+                 v-model="cardValidThru"
+                 @input="handleInputCardValidThru">
+          <input type='text' placeholder='CVC' class='form-card-validate'
+                 @keyup.9="showFlag = false"
+                 @click="showFlag = false"
+                 v-model="cardValidate"
+                 maxlength='4'
+                 @input="handleInputCardValidate">
+      </div>
+      <div class="validThruWrapper" v-show="msgValidThruFlag">
+        <v-alertMsg :msgContent="msgContent"></v-alertMsg>
+      </div>
+      <div class="validateWrapper" v-show="msgValidateFlag">
+        <v-alertMsg :msgContent="msgContent"></v-alertMsg>
+      </div>
+      <Button class='button-pay' @click="submit">PAY</Button>
+      <div class="cardReportWrapper">
+        <div class="cardReport" v-show="reportConfirmFlag">
+          <span>number: {{cardNumbers}}</span><br/>
+          <span>name: {{cardName}}</span><br/>
+          <span>expiry: {{cardValidate}}</span><br/>
+          <span>cvc: {{cardValidThru}}</span><br/>
+          <span>issuer:</span>
+        </div>
+      </div>
   </div>
 </template>
 
 <script type='text/ecmascript-6'>
 import { addDot } from '../utils/addDot.js'
-import { Message } from 'element-ui'
-// import { required } from 'vuelidate/lib/validators'
 export default {
   data () {
     return {
       showFlag: true,
       colorFlag: false,
       reportConfirmFlag: false,
+      msgNumberFlag: false,
+      msgNameFlag: false,
+      msgValidateFlag: false,
+      msgValidThruFlag: false,
       cardNumbers: '',
       cardValidate: '',
       cardName: '',
       cardValidThru: '',
+      msgContent: '',
       iconWidth: '42px',
       iconHeight: '26px',
       imgUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9Ijc2IiB2aWV3Qm' +
@@ -119,11 +133,9 @@ export default {
                                       'M0NS4xOTUuNjU5LjUwMi44MTN6IiBmaWxsPSIjMEMwMjAwIi8+PC9zdmc+'
     }
   },
-  // validations: {
-  //   cardNumbers: {
-  //     required
-  //   }
-  // },
+  components: {
+    'v-alertMsg': resolve => require(['components/alertMsg.vue'], resolve)
+  },
   filters: {
     addSpace: function (value) {
       return value.toString().replace(/\s/g, '').replace(/[^\S]/g, '').replace(/(\S{4})(?=\S)/g, '$1 ')
@@ -146,44 +158,55 @@ export default {
   methods: {
     submit () {
       if (!this.cardNumbers) {
-        Message({
-          type: 'warning',
-          message: '请完整填写信息',
-          showClose: true
-        })
-      } else if (!this.cardValidate) {
-        Message({
-          type: 'warning',
-          message: '请完整填写信息',
-          showClose: true
-        })
-      } else if (!this.cardValidThru) {
-        Message({
-          type: 'warning',
-          message: '请完整填写信息',
-          showClose: true
-        })
-      } else if (this.cardNumbers.length < 16) {
-        Message({
-          type: 'warning',
-          message: '请与要求的格式一致',
-          showClose: true
-        })
-      } else if (this.cardValidate.length < 4) {
-        Message({
-          type: 'warning',
-          message: '请与要求的格式一致',
-          showClose: true
-        })
-      } else if (this.cardValidThru.length < 4) {
-        Message({
-          type: 'warning',
-          message: '请与要求的格式一致',
-          showClose: true
-        })
+        this.msgNumberFlag = true
+        this.msgContent = '请填写此number'
+        return
       } else {
-        this.reportConfirmFlag = true
+        this.msgNumberFlag = false
       }
+      if (this.cardNumbers.length < 16) {
+        this.msgNumberFlag = true
+        this.msgContent = '请与所要求的格式保持一致'
+        return
+      } else {
+        this.msgNumberFlag = false
+      }
+      if (!this.cardName) {
+        this.msgNameFlag = true
+        this.msgContent = '请填写此name'
+        return
+      } else {
+        this.msgNameFlag = false
+      }
+      if (!this.cardValidThru) {
+        this.msgValidThruFlag = true
+        this.msgContent = '请填写此validateThru'
+        return
+      } else {
+        this.msgValidThruFlag = false
+      }
+      if (this.cardValidThru.length < 4) {
+        this.msgValidThruFlag = true
+        this.msgContent = '请与所要求的格式保持一致'
+        return
+      } else {
+        this.msgValidThruFlag = false
+      }
+      if (!this.cardValidate) {
+        this.msgValidateFlag = true
+        this.msgContent = '请填写此validate'
+        return
+      } else {
+        this.msgValidateFlag = false
+      }
+      if (this.cardValidate.length < 4) {
+        this.msgValidateFlag = true
+        this.msgContent = '请与所要求的格式保持一致'
+        return
+      } else {
+        this.msgValidateFlag = false
+      }
+      this.reportConfirmFlag = true
     },
     handleInputCardNumbers (e) {
       this.cardNumbers = e.target.value.replace(/[^\d]/g, '')
@@ -201,7 +224,6 @@ export default {
 </script>
 
 <style scoped lang='stylus' rel='stylesheet/stylus'>
-/*@import '../common/stylus/mixin.styl'*/
 .creditCard
   height: 100%
   width: 100%
@@ -343,6 +365,8 @@ export default {
     width:400px
     height:38px
     margin 20px auto 5px auto
+    .msg-card-type
+      position absolute
     .form-card-date, .form-card-validate
       display: inline-block
       vertical-align top
@@ -360,6 +384,18 @@ export default {
         text-indent 10px
     .form-card-date
       margin-right 20px
+  .validThruWrapper
+    display: inline-block
+    vertical-align: top
+    margin-left 750px
+    width:200px
+    height:38px
+  .validateWrapper
+    display: inline-block
+    vertical-align: top
+    margin-left 950px
+    width:200px
+    height:38px
   .button-pay
     display: block
     width:400px
@@ -371,11 +407,17 @@ export default {
     border-radius 4px
     user-select: none
     font-size 16px
-  .cardReport
-    width:300px
+  .cardReportWrapper
+    width 100%
     height:150px
-    margin 20px auto 0 auto
+    display: flex
+    justify-content center
+  .cardReport
+    /*width:300px*/
+    margin-top 10px
+    height:150px
     font-size 16px
     color: #212529
     font-family: serif
+    line-height: 1.5
 </style>
