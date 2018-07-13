@@ -1,6 +1,6 @@
 <template>
   <div class='creditCard'>
-      <form class="rotate-wrapper">
+      <div class="rotate-wrapper">
         <transition name="rotate1">
           <div class='card-content' v-show="showFlag">
             <div class="card-icon">
@@ -28,29 +28,34 @@
             </div>
           </div>
         </transition>
-      </form>
-      <div class='container-number'>
-      <input placeholder='Card Number' class='form-card-number'
-       @input="handleInputCardNumbers"
-       maxlength='16'
-       @focus="focusCardNumbersFlag = !focusCardNumbersFlag"
-       @blur="focusCardNumbersFlag = !focusCardNumbersFlag"
-       v-model='cardNumbers'
-       @click="showFlag = true"
-       >
-    </div>
-      <v-alertMsg :msgContent="msgContent" v-show="msgNumberFlag"></v-alertMsg>
-      <small>E.g.: 49..., 51..., 36..., 37...</small>
-      <div class='container-name'>
-        <input type='text' placeholder='Name' class='form-card-name'
-        @click="showFlag = true"
-        v-model="cardName"
-        @focus="focusCardNameFlag = !focusCardNameFlag"
-        @blur="focusCardNameFlag = !focusCardNameFlag"
-        >
       </div>
-      <v-alertMsg :msgContent="msgContent" v-show="msgNameFlag"></v-alertMsg>
-      <div class='container-valid-cvc'>
+      <form>
+        <div class='container-number'>
+          <label for="number"></label>
+          <input placeholder='Card Number' class='form-card-number'
+                 @input="handleInputCardNumbers"
+                 maxlength='16'
+                 @focus="focusCardNumbersFlag = !focusCardNumbersFlag"
+                 @blur="focusCardNumbersFlag = !focusCardNumbersFlag"
+                 v-model='cardNumbers'
+                 @click="showFlag = true"
+          >
+        </div>
+        <v-alertMsg :msgContent="msgContent" v-show="msgNumberFlag"></v-alertMsg>
+        <small>E.g.: 49..., 51..., 36..., 37...</small>
+        <div class='container-name'>
+          <label for="name"></label>
+          <input type='text' placeholder='Name' class='form-card-name'
+                 @click="showFlag = true"
+                 v-model="cardName"
+                 autocomplete="on"
+                 @focus="focusCardNameFlag = !focusCardNameFlag"
+                 @blur="focusCardNameFlag = !focusCardNameFlag"
+          >
+        </div>
+        <v-alertMsg :msgContent="msgContent" v-show="msgNameFlag"></v-alertMsg>
+        <div class='container-valid-cvc'>
+          <label for="Valid"></label>
           <input type='text' placeholder='Valid Thru' class='form-card-date'
                  @click="showFlag = true"
                  maxlength='4'
@@ -58,19 +63,21 @@
                  @input="handleInputCardValidThru"
                  @focus="focusCardValidateFlag = !focusCardValidateFlag"
                  @blur="focusCardValidateFlag = !focusCardValidateFlag">
+          <label for="Validate"></label>
           <input type='text' placeholder='CVC' class='form-card-validate'
                  @keyup.9="showFlag = false"
                  @click="showFlag = false"
                  v-model="cardValidate"
                  maxlength='4'
                  @input="handleInputCardValidate">
-      </div>
-      <div class="validThruWrapper" v-show="msgValidThruFlag">
-        <v-alertMsg :msgContent="msgContent"></v-alertMsg>
-      </div>
-      <div class="validateWrapper" v-show="msgValidateFlag">
-        <v-alertMsg :msgContent="msgContent"></v-alertMsg>
-      </div>
+        </div>
+        <div class="validThruWrapper" v-show="msgValidThruFlag">
+          <v-alertMsg :msgContent="msgContent"></v-alertMsg>
+        </div>
+        <div class="validateWrapper" v-show="msgValidateFlag">
+          <v-alertMsg :msgContent="msgContent"></v-alertMsg>
+        </div>
+      </form>
       <Button class='button-pay' @click="submit">PAY</Button>
       <div class="cardReportWrapper">
         <div class="cardReport" v-show="reportConfirmFlag">
