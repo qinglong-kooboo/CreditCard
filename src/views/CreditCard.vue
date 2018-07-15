@@ -3,6 +3,7 @@
       <div class="rotate-wrapper">
         <transition name="rotate1">
           <div class='card-content' v-show="showFlag">
+            <v-background ref="frontBackground" :bgColor="bgFrontColor"></v-background>
             <div class="card-icon">
               <img :src="imgUrl" :style="{width: iconWidth, height: iconHeight }">
             </div>
@@ -22,6 +23,7 @@
         </transition>
         <transition name="rotate2">
           <div class="card-content-converse" v-show="!showFlag">
+            <v-background ref="backBackground" :bgColor="bgBackColor"></v-background>
             <div class="blackTip"></div>
             <div class="whiteTip">
               <span class="signature-input">{{cardValidate}}</span>
@@ -29,12 +31,12 @@
           </div>
         </transition>
       </div>
-      <form>
+      <form class="form-wrapper">
         <div class='container-number'>
           <label for="number"></label>
           <input placeholder='Card Number' class='form-card-number'
                  @input="handleInputCardNumbers"
-                 maxlength='16'
+                 maxlength='19'
                  @focus="focusCardNumbersFlag = !focusCardNumbersFlag"
                  @blur="focusCardNumbersFlag = !focusCardNumbersFlag"
                  v-model='cardNumbers'
@@ -58,7 +60,7 @@
           <label for="Valid"></label>
           <input type='text' placeholder='Valid Thru' class='form-card-date'
                  @click="showFlag = true"
-                 maxlength='4'
+                 maxlength='5'
                  v-model="cardValidThru"
                  @input="handleInputCardValidThru"
                  @focus="focusCardValidateFlag = !focusCardValidateFlag"
@@ -111,6 +113,8 @@ export default {
       cardName: '',
       cardValidThru: '',
       msgContent: '',
+      bgFrontColor: '',
+      bgBackColor: '',
       iconWidth: '42px',
       iconHeight: '26px',
       imgUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9Ijc2IiB2aWV3Qm' +
@@ -149,7 +153,8 @@ export default {
     }
   },
   components: {
-    'v-alertMsg': resolve => require(['components/alertMsg.vue'], resolve)
+    'v-alertMsg': resolve => require(['components/alertMsg.vue'], resolve),
+    'v-background': resolve => require(['components/cardBackground.vue'], resolve)
   },
   filters: {
     addSpace: function (value) {
@@ -224,233 +229,285 @@ export default {
       this.reportConfirmFlag = true
     },
     handleInputCardNumbers (e) {
-      this.cardNumbers = e.target.value.replace(/[^\d]/g, '')
+      this.cardNumbers = e.target.value.replace(/[^\d]/g, '').replace(/\s/g, '').replace(/[^\S]/g, '').replace(/(\S{4})(?=\S)/g, '$1 ')
     },
     handleInputCardValidate (e) {
-      this.cardValidate = e.target.value.replace(/[^\d]/g, '')
+      this.cardValidate = e.target.value.replace(/[^\d]/g, '').replace(/\s/g, '').replace(/[^\S]/g, '').replace(/(\S{4})(?=\S)/g, '$1 ')
     },
     handleInputCardValidThru (e) {
-      this.cardValidThru = e.target.value.replace(/[^\d]/g, '')
+      this.cardValidThru = e.target.value.replace(/[^\d]/g, '').replace(/\s/g, '/').replace(/[^\S]/g, '/').replace(/(\S{2})(?=\S)/g, '$1/')
+    }
+  },
+  watch: {
+    cardNumbers (val, oldVal) {
+      if (val.length > 1) {
+        let numPart = val.substring(0, 2)
+        switch (parseInt(numPart)) {
+          case 49:
+            this.$refs.frontBackground.isActive = true
+            this.$refs.backBackground.isActive = true
+            this.bgFrontColor = 'linear-gradient(25deg, #0f509e, #1399cd)'
+            this.bgBackColor = 'linear-gradient(25deg, #0f509e, #1399cd)'
+            break
+          case 51:
+            this.$refs.frontBackground.isActive = true
+            this.$refs.backBackground.isActive = true
+            this.bgFrontColor = 'linear-gradient(25deg, #f37b26, #fdb731)'
+            this.bgBackColor = 'linear-gradient(25deg, #f37b26, #fdb731)'
+            break
+          case 36:
+            this.$refs.frontBackground.isActive = true
+            this.$refs.backBackground.isActive = true
+            this.bgFrontColor = 'linear-gradient(25deg, #f30b16, #fda700)'
+            this.bgBackColor = 'linear-gradient(25deg, #f30b16, #fda700)'
+            break
+          case 37:
+            this.$refs.frontBackground.isActive = true
+            this.$refs.backBackground.isActive = true
+            this.bgFrontColor = 'linear-gradient(25deg, #308c67, #a3f2cf)'
+            this.bgBackColor = 'linear-gradient(25deg, #308c67, #a3f2cf)'
+            break
+          default:
+            this.$refs.frontBackground.isActive = false
+            this.$refs.backBackground.isActive = false
+        }
+      } else {
+        this.$refs.frontBackground.isActive = false
+        this.$refs.backBackground.isActive = false
+      }
     }
   }
 }
 </script>
 
 <style scoped lang='stylus' rel='stylesheet/stylus'>
-.creditCard
-  height: 100%
-  width: 100%
-  background-color: #fff;
-  overflow: hidden
-  .rotate-wrapper
-    width: 290px;
-    height: 242px
-    margin 0px auto
-    overflow: hidden
-    transform:translate3d(0,0,0)
-    perspective: 1000px
-    .card-content
+  .creditCard
+    position: relative
+    padding-top 30px
+    height: 100%
+    width: 100%
+    background-color: #fff
+    .rotate-wrapper
       position: absolute
-      left 0
-      top 30px
-      width: 290px;
+      left: 800px
+      top: 30px
+      width: 290px
       height: 182px
-      background-color: rgb(153, 153, 153);
-      border-radius 14.5px
-      transform:transition3d(0,0,0)
-      transform-style preserve-3d
-      transition: transform .2s linear
-      &.rotate1-enter-active,&.rotate1-leave-active
-        transform rotateY(90deg)
-      &.rotate1-enter, &.rotate1-leave-active
-        transform: rotateY(90deg)
-      .card-icon
+      /*margin 0px auto*/
+      transform:translate3d(0,0,0)
+      perspective: 1000px
+      .card-content
         position: absolute
-        height:42px
-        width 26px
-        top:20px
-        left:25px
-      .card-dot
-        position: absolute
-        height:30px
-        line-height 30px
-        left:30px
-        top 85px
-        font-size 20px
-        font-family: Consolas, Courier, monospace
-        opacity 0.5
-        &.active
-          transition opacity .3s
-          opacity 1
-          font-weight 700
-      .card-name
-        position: absolute
-        width: 174px
-        height:20px
-        line-height 20px
-        left:30px
-        bottom: 25px
-        font-size 17px
-        overflow:hidden
-        white-space nowrap
-        text-overflow: ellipsis
-        text-transform: uppercase
-        font-family: Consolas, Courier, monospace
-        font-size: 17px
-        opacity 0.5
-        &.active
-          transition opacity .3s
-          opacity 1
-          font-weight 700
-      .valid-thru
-        position: absolute
-        height:12px
-        line-height 12px
-        top:120px
-        right: 30px
-        font-size 10px
-        color: #fff
-        opacity 0.5
-        &.active
-          transition opacity .3s
-          opacity 1
-          font-weight 700
-      .valid-thru-value
-        position: absolute
-        height:12px
-        line-height 12px
-        top:141px
-        left: 208px
-        font-size 16px
-        color: #fff
-        opacity 0.5
-        &.active
-          transition opacity .3s
-          opacity 1
-          font-weight 700
-    .card-content-converse
-      position: absolute
-      left 0
-      top 30px
-      width: 290px;
-      height: 182px
-      background-color: rgb(153, 153, 153);
-      border-radius 14.5px
-      transform:transition3d(0,0,0)
-      transform-style preserve-3d
-      transition: transform .2s linear
-      &.rotate2-enter-active, &.rotate2-leave-active
-        transform: rotateY(-90deg)
-      &.rotate2-enter, &.rotate2-leave-active
-        transform: rotateY(-90deg)
-      .blackTip
-        position: absolute
-        width 100%
-        height:40px
-        top 20px
-        left: 0
-        background-color: #000
-      .whiteTip
-        position: absolute
-        width 217px
-        height:33px
-        top 68px
-        left: 16px
-        background: repeating-linear-gradient(0.1deg, #fff 20%, #fff 40%, #fea 40%, #fea 44%, #fff 44%)
-        .signature-input
-          display block
+        left 0
+        top 0
+        width: 290px;
+        height: 182px
+        background-color: rgb(153, 153, 153);
+        border-radius 14.5px
+        transform:transition3d(0,0,0)
+        transform-style preserve-3d
+        transition: transform .2s linear
+        overflow: hidden
+        z-index: 20
+        &.rotate1-enter-active,&.rotate1-leave-active
+          transform rotateY(90deg)
+        .card-icon
           position: absolute
-          top: 15px
-          right: 5px
-          height:14px
-          color: #222
+          height:42px
+          width 26px
+          top:20px
+          left:25px
+          z-index:100
+        .card-dot
+          position: absolute
+          height:30px
+          line-height 30px
+          left:30px
+          top 85px
+          font-size 20px
           font-family: Consolas, Courier, monospace
-          font-size: 14px
-  & small
-    width 400px
-    height: 15px
-    display: block
-    margin 0 auto
-    color #000
-    font-size 12px
-    font-weight: 400
-  .container-number, .container-name
-    margin 0px auto 5px auto
-    width:400px
-    height:38px
-    .form-card-number, .form-card-name
+          z-index:100
+          &.active
+            transition opacity .3s
+            opacity 1
+            font-weight 700
+        .card-name
+          position: absolute
+          width: 174px
+          height:20px
+          line-height 20px
+          left:30px
+          bottom: 25px
+          font-size 17px
+          overflow:hidden
+          white-space nowrap
+          text-overflow: ellipsis
+          text-transform: uppercase
+          font-family: Consolas, Courier, monospace
+          font-size: 17px
+          z-index:100
+          &.active
+            transition opacity .3s
+            opacity 1
+            font-weight 700
+        .valid-thru
+          position: absolute
+          height:12px
+          line-height 12px
+          top:120px
+          right: 30px
+          font-size 10px
+          color: #fff
+          z-index:100
+          &.active
+            transition opacity .3s
+            opacity 1
+            font-weight 700
+        .valid-thru-value
+          position: absolute
+          height:12px
+          line-height 12px
+          top:141px
+          left: 208px
+          font-size 16px
+          color: #fff
+          z-index:100
+          &.active
+            transition opacity .3s
+            opacity 1
+            font-weight 700
+      .card-content-converse
+        position: absolute
+        left 0
+        top 0px
+        width: 290px;
+        height: 182px
+        overflow: hidden
+        background-color: rgb(153, 153, 153);
+        border-radius 14.5px
+        transform:transition3d(0,0,0)
+        transform-style preserve-3d
+        transition: transform .2s linear
+        &.rotate2-enter-active, &.rotate2-leave-active
+          transform: rotateY(-90deg)
+        .blackTip
+          position: absolute
+          width 100%
+          height:40px
+          top 20px
+          left: 0
+          background-color: #000
+          z-index:100
+        .whiteTip
+          position: absolute
+          width 217px
+          height:33px
+          top 68px
+          left: 16px
+          z-index:100
+          background: repeating-linear-gradient(0.1deg, #fff 20%, #fff 40%, #fea 40%, #fea 44%, #fff 44%)
+          .signature-input
+            display block
+            position: absolute
+            top: 15px
+            right: 5px
+            height:14px
+            color: #222
+            font-family: Consolas, Courier, monospace
+            font-size: 14px
+            z-index:100
+    & small
+      width 400px
+      height: 15px
+      display: block
+      margin 0 auto
+      color #000
+      font-size 12px
+      font-weight: 400
+    .form-wrapper
+      position: absolute
+      top 250px
+      left:750px
+      width:400px
+      .container-number, .container-name
+        margin 0px auto 5px auto
+        width:400px
+        height:38px
+        .form-card-number, .form-card-name
+          width:400px
+          height:38px
+          border 1px solid rgba(0,0,0,.15)
+          border-radius 4px
+          text-indent 10px
+          &:focus
+            color: rgb(73, 80, 87)
+            background-color: rgb(255, 255, 255)
+            border-color: rgb(128, 189, 255)
+            outline: 0px
+          &::placeholder
+            text-indent 10px
+      .container-name
+        margin 15px auto 5px auto
+      .container-valid-cvc
+        width:400px
+        height:38px
+        margin 20px auto 5px auto
+        .msg-card-type
+          position absolute
+        .form-card-date, .form-card-validate
+          display: inline-block
+          vertical-align top
+          border 1px solid rgba(0,0,0,.15)
+          border-radius 4px
+          text-indent 10px
+          width 185px
+          height:38px
+          &:focus
+            color: rgb(73, 80, 87)
+            background-color: rgb(255, 255, 255)
+            border-color: rgb(128, 189, 255)
+            outline: 0px
+          &::placeholder
+            text-indent 10px
+        .form-card-date
+          margin-right 20px
+      .validThruWrapper
+        display: inline-block
+        vertical-align: top
+        margin-left 750px
+        width:200px
+        height:38px
+      .validateWrapper
+        display: inline-block
+        vertical-align: top
+        margin-left 950px
+        width:200px
+        height:38px
+    .button-pay
+      display: block
+      position: absolute
       width:400px
       height:38px
-      // borderB-1px(rgba(0,0,0,.15))
-      border 1px solid rgba(0,0,0,.15)
+      top 440px
+      left: 750px
+      color: #fff
+      background-color: #007bff
+      border none
       border-radius 4px
-      text-indent 10px
-      &:focus
-        color: rgb(73, 80, 87)
-        background-color: rgb(255, 255, 255)
-        border-color: rgb(128, 189, 255)
-        outline: 0px
-      &::placeholder
-        text-indent 10px
-  .container-name
-    margin 15px auto 5px auto
-  .container-valid-cvc
-    width:400px
-    height:38px
-    margin 20px auto 5px auto
-    .msg-card-type
+      user-select: none
+      font-size 16px
+    .cardReportWrapper
       position absolute
-    .form-card-date, .form-card-validate
-      display: inline-block
-      vertical-align top
-      border 1px solid rgba(0,0,0,.15)
-      border-radius 4px
-      text-indent 10px
-      width 185px
-      height:38px
-      &:focus
-        color: rgb(73, 80, 87)
-        background-color: rgb(255, 255, 255)
-        border-color: rgb(128, 189, 255)
-        outline: 0px
-      &::placeholder
-        text-indent 10px
-    .form-card-date
-      margin-right 20px
-  .validThruWrapper
-    display: inline-block
-    vertical-align: top
-    margin-left 750px
-    width:200px
-    height:38px
-  .validateWrapper
-    display: inline-block
-    vertical-align: top
-    margin-left 950px
-    width:200px
-    height:38px
-  .button-pay
-    display: block
-    width:400px
-    height:38px
-    margin 20px auto 5px auto
-    color: #fff
-    background-color: #007bff
-    border none
-    border-radius 4px
-    user-select: none
-    font-size 16px
-  .cardReportWrapper
-    width 100%
-    height:150px
-    display: flex
-    justify-content center
-  .cardReport
-    /*width:300px*/
-    margin-top 10px
-    height:150px
-    font-size 16px
-    color: #212529
-    font-family: serif
-    line-height: 1.5
+      top: 480px
+      width: 100%;
+      height:150px
+      display: flex
+      justify-content center
+    .cardReport
+      margin-top 10px
+      height:150px
+      font-size 16px
+      color: #212529
+      font-family: serif
+      line-height: 1.5
 </style>
