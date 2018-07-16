@@ -17,16 +17,15 @@ export default {
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
   .msg-card-type
-    margin 15px auto
+    margin 55px auto
     padding: 5px
     width:220px
     height:30px
     border:1px solid #f99
     position:relative
     background-color:#FFF
-    -webkit-border-radius:5px
-    -moz-border-radius:5px
     border-radius:5px
+    z-index: 30
     .msg-risk-img
       display: inline-block
       vertical-align: top

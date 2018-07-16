@@ -55,7 +55,7 @@
                  @blur="focusCardNameFlag = !focusCardNameFlag"
           >
         </div>
-        <v-alertMsg :msgContent="msgContent" v-show="msgNameFlag"></v-alertMsg>
+        <v-alertMsg :msgContent="msgContent" v-show="msgNameFlag" class="msgName"></v-alertMsg>
         <div class='container-valid-cvc'>
           <label for="Valid"></label>
           <input type='text' placeholder='Valid Thru' class='form-card-date'
@@ -79,8 +79,8 @@
         <div class="validateWrapper" v-show="msgValidateFlag">
           <v-alertMsg :msgContent="msgContent"></v-alertMsg>
         </div>
+        <Button class='button-pay' @click="submit">PAY</Button>
       </form>
-      <Button class='button-pay' @click="submit">PAY</Button>
       <div class="cardReportWrapper">
         <div class="cardReport" v-show="reportConfirmFlag">
           <span>number: {{cardNumbers}}</span><br/>
@@ -177,16 +177,23 @@ export default {
   },
   methods: {
     submit () {
+      let that = this
       if (!this.cardNumbers) {
         this.msgNumberFlag = true
         this.msgContent = '请填写此字段'
+        setTimeout(() => {
+          that.msgNumberFlag = false
+        }, 1000)
         return
       } else {
         this.msgNumberFlag = false
       }
-      if (this.cardNumbers.length < 16) {
+      if (this.cardNumbers.length < 19) {
         this.msgNumberFlag = true
         this.msgContent = '请与所要求的格式保持一致'
+        setTimeout(() => {
+          that.msgNumberFlag = false
+        }, 1000)
         return
       } else {
         this.msgNumberFlag = false
@@ -194,6 +201,9 @@ export default {
       if (!this.cardName) {
         this.msgNameFlag = true
         this.msgContent = '请填写此字段'
+        setTimeout(() => {
+          that.msgNameFlag = false
+        }, 1000)
         return
       } else {
         this.msgNameFlag = false
@@ -201,13 +211,19 @@ export default {
       if (!this.cardValidThru) {
         this.msgValidThruFlag = true
         this.msgContent = '请填写此字段'
+        setTimeout(() => {
+          that.msgValidThruFlag = false
+        }, 1000)
         return
       } else {
         this.msgValidThruFlag = false
       }
-      if (this.cardValidThru.length < 4) {
+      if (this.cardValidThru.length < 5) {
         this.msgValidThruFlag = true
         this.msgContent = '请与所要求的格式保持一致'
+        setTimeout(() => {
+          that.msgValidThruFlag = false
+        }, 1000)
         return
       } else {
         this.msgValidThruFlag = false
@@ -215,6 +231,9 @@ export default {
       if (!this.cardValidate) {
         this.msgValidateFlag = true
         this.msgContent = '请填写此字段'
+        setTimeout(() => {
+          that.msgValidateFlag = false
+        }, 1000)
         return
       } else {
         this.msgValidateFlag = false
@@ -222,6 +241,9 @@ export default {
       if (this.cardValidate.length < 4) {
         this.msgValidateFlag = true
         this.msgContent = '请与所要求的格式保持一致'
+        setTimeout(() => {
+          that.msgValidateFlag = false
+        }, 1000)
         return
       } else {
         this.msgValidateFlag = false
@@ -229,13 +251,13 @@ export default {
       this.reportConfirmFlag = true
     },
     handleInputCardNumbers (e) {
-      this.cardNumbers = e.target.value.replace(/[^\d]/g, '').replace(/\s/g, '').replace(/[^\S]/g, '').replace(/(\S{4})(?=\S)/g, '$1 ')
+      this.cardNumbers = e.target.value.replace(/[^\d]/g, '').replace(/(\S{4})(?=\S)/g, '$1 ')
     },
     handleInputCardValidate (e) {
-      this.cardValidate = e.target.value.replace(/[^\d]/g, '').replace(/\s/g, '').replace(/[^\S]/g, '').replace(/(\S{4})(?=\S)/g, '$1 ')
+      this.cardValidate = e.target.value.replace(/[^\d]/g, '').replace(/(\S{4})(?=\S)/g, '$1 ')
     },
     handleInputCardValidThru (e) {
-      this.cardValidThru = e.target.value.replace(/[^\d]/g, '').replace(/\s/g, '/').replace(/[^\S]/g, '/').replace(/(\S{2})(?=\S)/g, '$1/')
+      this.cardValidThru = e.target.value.replace(/[^\d]/g, '').replace(/(\S{2})(?=\S)/g, '$1/')
     }
   },
   watch: {
@@ -293,7 +315,6 @@ export default {
       top: 30px
       width: 290px
       height: 182px
-      /*margin 0px auto*/
       transform:translate3d(0,0,0)
       perspective: 1000px
       .card-content
@@ -417,20 +438,24 @@ export default {
             font-size: 14px
             z-index:100
     & small
+      position: absolute
+      top 45px
+      left: 0
       width 400px
       height: 15px
       display: block
-      margin 0 auto
       color #000
       font-size 12px
       font-weight: 400
     .form-wrapper
       position: absolute
-      top 250px
-      left:750px
+      top 245px
+      left:740px
       width:400px
       .container-number, .container-name
-        margin 0px auto 5px auto
+        position: absolute
+        top: 0
+        left 0
         width:400px
         height:38px
         .form-card-number, .form-card-name
@@ -447,11 +472,13 @@ export default {
           &::placeholder
             text-indent 10px
       .container-name
-        margin 15px auto 5px auto
+        top 80px
       .container-valid-cvc
+        position: absolute
+        top 136px
+        left: 0
         width:400px
         height:38px
-        margin 20px auto 5px auto
         .msg-card-type
           position absolute
         .form-card-date, .form-card-validate
@@ -471,31 +498,36 @@ export default {
             text-indent 10px
         .form-card-date
           margin-right 20px
+      .msgName
+        margin 132px auto
       .validThruWrapper
+        position: absolute
+        left 0px
+        top 134px
         display: inline-block
         vertical-align: top
-        margin-left 750px
         width:200px
         height:38px
       .validateWrapper
+        position: absolute
+        left 200px
+        top 134px
         display: inline-block
         vertical-align: top
-        margin-left 950px
         width:200px
         height:38px
-    .button-pay
-      display: block
-      position: absolute
-      width:400px
-      height:38px
-      top 440px
-      left: 750px
-      color: #fff
-      background-color: #007bff
-      border none
-      border-radius 4px
-      user-select: none
-      font-size 16px
+      .button-pay
+        position: absolute
+        width:400px
+        height:38px
+        top 190px
+        left: 0px
+        color: #fff
+        background-color: #007bff
+        border none
+        border-radius 4px
+        user-select: none
+        font-size 16px
     .cardReportWrapper
       position absolute
       top: 480px
