@@ -3,7 +3,7 @@
       <div class="rotate-wrapper">
         <transition name="rotate1">
           <div class='card-content' v-show="showFlag">
-            <v-background ref="frontBackground" :bgColor="bgFrontColor"></v-background>
+            <v-background :bgActiveFlag="bgActiveFlag" :bgColor="bgColor"></v-background>
             <div class="card-icon">
               <img :src="imgUrl" :style="{width: iconWidth, height: iconHeight }">
             </div>
@@ -23,7 +23,7 @@
         </transition>
         <transition name="rotate2">
           <div class="card-content-converse" v-show="!showFlag">
-            <v-background ref="backBackground" :bgColor="bgBackColor"></v-background>
+            <v-background :bgActiveFlag="bgActiveFlag" :bgColor="bgColor"></v-background>
             <div class="blackTip"></div>
             <div class="whiteTip">
               <span class="signature-input">{{cardValidate}}</span>
@@ -108,13 +108,13 @@ export default {
       focusCardNumbersFlag: false,
       focusCardNameFlag: false,
       focusCardValidateFlag: false,
+      bgActiveFlag: false,
       cardNumbers: '',
       cardValidate: '',
       cardName: '',
       cardValidThru: '',
       msgContent: '',
-      bgFrontColor: '',
-      bgBackColor: '',
+      bgColor: '',
       iconWidth: '42px',
       iconHeight: '26px',
       imgUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9Ijc2IiB2aWV3Qm' +
@@ -266,36 +266,26 @@ export default {
         let numPart = val.substring(0, 2)
         switch (parseInt(numPart)) {
           case 49:
-            this.$refs.frontBackground.isActive = true
-            this.$refs.backBackground.isActive = true
-            this.bgFrontColor = 'linear-gradient(25deg, #0f509e, #1399cd)'
-            this.bgBackColor = 'linear-gradient(25deg, #0f509e, #1399cd)'
+            this.bgActiveFlag = true
+            this.bgColor = 'linear-gradient(25deg, #0f509e, #1399cd)'
             break
           case 51:
-            this.$refs.frontBackground.isActive = true
-            this.$refs.backBackground.isActive = true
-            this.bgFrontColor = 'linear-gradient(25deg, #f37b26, #fdb731)'
-            this.bgBackColor = 'linear-gradient(25deg, #f37b26, #fdb731)'
+            this.bgActiveFlag = true
+            this.bgColor = 'linear-gradient(25deg, #f37b26, #fdb731)'
             break
           case 36:
-            this.$refs.frontBackground.isActive = true
-            this.$refs.backBackground.isActive = true
-            this.bgFrontColor = 'linear-gradient(25deg, #f30b16, #fda700)'
-            this.bgBackColor = 'linear-gradient(25deg, #f30b16, #fda700)'
+            this.bgActiveFlag = true
+            this.bgColor = 'linear-gradient(25deg, #f30b16, #fda700)'
             break
           case 37:
-            this.$refs.frontBackground.isActive = true
-            this.$refs.backBackground.isActive = true
-            this.bgFrontColor = 'linear-gradient(25deg, #308c67, #a3f2cf)'
-            this.bgBackColor = 'linear-gradient(25deg, #308c67, #a3f2cf)'
+            this.bgActiveFlag = true
+            this.bgColor = 'linear-gradient(25deg, #308c67, #a3f2cf)'
             break
           default:
-            this.$refs.frontBackground.isActive = false
-            this.$refs.backBackground.isActive = false
+            this.bgActiveFlag = false
         }
       } else {
-        this.$refs.frontBackground.isActive = false
-        this.$refs.backBackground.isActive = false
+        this.bgActiveFlag = false
       }
     }
   }

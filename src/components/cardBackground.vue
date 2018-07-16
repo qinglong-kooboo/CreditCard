@@ -1,18 +1,17 @@
 <template>
-<div class="cardBackground" :class="{active: isActive}" :style="{background: bgColor}">
+<div class="cardBackground" :class="{active: bgActiveFlag}" :style="{background: bgColor}">
 </div>
 </template>
 
 <script type="text/ecmascript-6">
 export default {
   props: {
+    bgActiveFlag: {
+      type: Boolean,
+      default: false
+    },
     bgColor: {
       type: String
-    }
-  },
-  data () {
-    return {
-      isActive: false
     }
   }
 }
