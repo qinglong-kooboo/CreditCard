@@ -5,46 +5,41 @@
             :cardName="cardName"
             :cardValidate="cardValidate"
             :cardValidThru="cardValidThru"
+            :focusNum="focusNum"
     ></v-card>
     <form class="form-wrapper">
-      <div class='container-number'>
-        <label for="number"></label>
-        <input placeholder='Card Number' class='form-card-number'
+      <div class="container-number form-group" :class="{ 'form-group--error': $v.cardNumbers.$error }">
+        <label for="number" class="form__label"></label>
+        <input placeholder='Card Number' class='form-card-number form__input'
                @input="handleInputCardNumbers"
                maxlength='19'
-               @focus="focusCardNumbersFlag = !focusCardNumbersFlag"
-               @blur="focusCardNumbersFlag = !focusCardNumbersFlag"
-               v-model='cardNumbers'
-               @click="showFlag = true"
-        >
+               v-model.trim="$v.cardNumbers.$model"
+               @click="showFlag = true, focusNum = 1">
       </div>
+      <div class="error" v-if="!$v.cardNumbers.required">Field is required</div>
+      <div class="error" v-if="!$v.cardNumbers.minLength">Name must have at least {{$v.cardNumbers.$params.minLength.min}} letters.</div>
       <v-alertMsg :msgContent="msgContent" v-show="msgNumberFlag"></v-alertMsg>
       <span class="card-num-des">E.g.: 49..., 51..., 36..., 37...</span>
       <div class='container-name'>
         <label for="name"></label>
         <input type='text' placeholder='Name' class='form-card-name'
-               @click="showFlag = true"
-               v-model="cardName"
-               autocomplete="on"
-               @focus="focusCardNameFlag = !focusCardNameFlag"
-               @blur="focusCardNameFlag = !focusCardNameFlag"
-        >
+               @click="showFlag = true, focusNum = 2"
+               v-model="$v.cardName.$model"
+               autocomplete="on">
       </div>
       <v-alertMsg :msgContent="msgContent" v-show="msgNameFlag" class="msgName"></v-alertMsg>
       <div class='container-valid-cvc'>
         <label for="Valid"></label>
         <input type='text' placeholder='Valid Thru' class='form-card-date'
-               @click="showFlag = true"
+               @click="showFlag = true, focusNum = 3"
                maxlength='5'
-               v-model="cardValidThru"
-               @input="handleInputCardValidThru"
-               @focus="focusCardValidateFlag = !focusCardValidateFlag"
-               @blur="focusCardValidateFlag = !focusCardValidateFlag">
+               v-model="$v.cardValidThru.$model"
+               @input="handleInputCardValidThru">
         <label for="Validate"></label>
         <input type='text' placeholder='CVC' class='form-card-validate'
                @keyup.9="showFlag = false"
                @click="showFlag = false"
-               v-model="cardValidate"
+               v-model="$v.cardValidate.$model"
                maxlength='4'
                @input="handleInputCardValidate">
       </div>
@@ -69,28 +64,44 @@
 </template>
 
 <script type='text/ecmascript-6'>
+import { required, minLength } from 'vuelidate/lib/validators'
 export default {
   data () {
     return {
+      focusNum: 0,
       showFlag: true,
       reportConfirmFlag: false,
       msgNumberFlag: false,
       msgNameFlag: false,
       msgValidateFlag: false,
       msgValidThruFlag: false,
-      focusCardNumbersFlag: false,
-      focusCardNameFlag: false,
-      focusCardValidateFlag: false,
+      msgContent: '',
       cardNumbers: '',
       cardValidate: '',
       cardName: '',
-      cardValidThru: '',
-      msgContent: ''
+      cardValidThru: ''
+    }
+  },
+  validations: {
+    cardNumbers: {
+      required,
+      minLength: minLength(19)
+    },
+    cardName: {
+      required
+    },
+    cardValidThru: {
+      required,
+      minLength: minLength(5)
+    },
+    cardValidate: {
+      required,
+      minLength: minLength(4)
     }
   },
   components: {
-    'v-alertMsg': resolve => require(['components/alertMsg.vue'], resolve),
-    'v-card': resolve => require(['components/cardContent.vue'], resolve)
+    'v-card': () => import('components/cardContent.vue'),
+    'v-alertMsg': () => import('components/alertMsg.vue')
   },
   methods: {
     submit () {
