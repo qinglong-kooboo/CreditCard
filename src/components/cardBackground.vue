@@ -25,7 +25,7 @@ export default {
   top: -60%
   transform: rotate(25deg)
   width: 150%
-  background-color: #222
+  background-color: #999
   z-index: 50
   &.active
     left: -22%
