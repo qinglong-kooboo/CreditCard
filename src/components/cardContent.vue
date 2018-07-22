@@ -127,11 +127,9 @@ export default {
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
   .rotate-wrapper
-    position: absolute
-    left: 800px
-    top: 30px
     width: 290px
     height: 182px
+    margin: 0 auto
     transform:translate3d(0,0,0)
     perspective: 1000px
     .card-content
